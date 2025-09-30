@@ -5,43 +5,83 @@ struct node {
     int data;
     struct node *next;
 };
-
 struct node *start = NULL;
 
 struct node* getNode() {
     struct node* q = (struct node*)malloc(sizeof(struct node));
     return q;
 }
+
+// Insert at beginning
 struct node* InsertAtBegin(struct node* start, int value) {
     struct node* newnode = getNode();
     newnode->data = value;
-    newnode->next = start;
-    start = newnode;
+    if (start == NULL) {
+        start = newnode;
+        newnode->next = start;   // self loop
+    } else {
+        struct node* temp = start;
+        while (temp->next != start) {  // last node tak jao
+            temp = temp->next;
+        }
+        newnode->next = start;
+        temp->next = newnode;
+        start = newnode;
+    }
     return start;
 }
 
+// Traversal (circular)
 void Traversal(struct node* start) {
+    if (start == NULL) {
+        cout << "List is empty!" << endl;
+        return;
+    }
     struct node* p = start;
-    while (p != NULL) {
+    do {
         cout << p->data << " ";
         p = p->next;
-    }
+    } while (p != start);
     cout << endl;
 }
 
+// Insert after a given value
 struct node* InsertAfter(struct node* start, int value, int pos) {
-    struct node* temp = start;
-    while (temp != NULL && temp->data != pos) {
-        temp = temp->next;
-    }
-    if (temp == NULL) {
-        cout << "Position not found!" << endl;
+    if (start == NULL) {
+        cout << "List is empty!" << endl;
         return start;
     }
-    struct node* p = getNode();
-    p->data = value;
-    p->next = temp->next;
-    temp->next = p;
+    struct node* temp = start;
+    do {
+        if (temp->data == pos) {
+            struct node* p = getNode();
+            p->data = value;
+            p->next = temp->next;
+            temp->next = p;
+            return start;
+        }
+        temp = temp->next;
+    } while (temp != start);
+
+    cout << "Position not found!" << endl;
+    return start;
+}
+
+// Insert at end
+struct node* InsertAtEnd(struct node* start, int value) {
+    struct node* newnode = getNode();
+    newnode->data = value;
+    if (start == NULL) {
+        start = newnode;
+        newnode->next = start;
+    } else {
+        struct node* temp = start;
+        while (temp->next != start) {
+            temp = temp->next;
+        }
+        temp->next = newnode;
+        newnode->next = start;
+    }
     return start;
 }
 
@@ -53,9 +93,6 @@ int main() {
         cout << "2. Insertion from the beginning\n";
         cout << "3. Insertion after a node\n";
         cout << "4. Insertion at the end\n";
-        cout << "5. Deletion from start\n";
-        cout << "6. Deletion from the end\n";
-        cout << "7. Deletion after a node\n";
         cout << "0. Exit\n";
         cin >> ch;
 
@@ -74,9 +111,16 @@ int main() {
                 int value, pos;
                 cout << "enter the value to be inserted: ";
                 cin >> value;
-                cout << "enter the position after which to insert: ";
+                cout << "enter the node value after which to insert: ";
                 cin >> pos;
                 start = InsertAfter(start, value, pos);
+                break;
+            }
+            case 4: {
+                int value;
+                cout << "enter the value to be inserted: ";
+                cin >> value;
+                start = InsertAtEnd(start, value);
                 break;
             }
             case 0:
@@ -87,6 +131,5 @@ int main() {
                 break;
         }
     } while (ch != 0);
-
     return 0;
 }
