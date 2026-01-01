@@ -34,6 +34,7 @@ void push(struct Node** head_ref, int new_data) {
 }
 int main() {
     struct Node* head = NULL;
+    push(&head, 5);
     push(&head, 4);
     push(&head, 3);
     push(&head, 2);
